@@ -1,0 +1,11 @@
+{
+  "scenarios": {
+    "main": {
+      "executor": "ramping-vus",
+      "startVUs": 100,
+      "stages": [
+        { "target": 5000, "duration": "15m" }
+      ]
+    }
+  }
+}

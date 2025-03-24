@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: monitoring
+
+helmCharts:
+  - name: k6-operator
+    repo: "https://grafana.github.io/helm-charts"
+    version: "^3.9.0"
+    releaseName: k6-operaotr
+    namespace: monitoring
+    includeCRDs: false
+    valuesFile: ../../base/k6-operator.yaml

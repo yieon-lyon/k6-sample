@@ -1,0 +1,41 @@
+apiVersion: k6.io/v1alpha1
+kind: TestRun
+metadata:
+  name: k6-test
+spec:
+  parallelism: 4
+  cleanup: post
+  script:
+    localFile: ./test.js
+  runner:
+    image: XXXX.dkr.ecr.ap-northeast-2.amazonaws.com/lyon/k6:0.0.1
+    env:
+      - name: K6_PROMETHEUS_RW_SERVER_URL
+        value: "http://mimir-nginx.monitoring.svc.cluster.local:80/api/v1/push"
+      - name: K6_PROMETHEUS_RW_TREND_STATS
+        value: "count,sum,min,max,avg,med,p(90),p(95),p(99)"
+      - name: K6_OUT
+        value: experimental-prometheus-rw
+      # Custom environment variables
+      - name: URI
+        value: "https://alpha.lyon.com/api/test"
+      - name: AUTH_ENABLED
+        value: "true"
+      - name: TOKEN
+        value: "Bearer XXXX"
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    nodeSelector:
+      eks.amazonaws.com/nodegroup: k6
+      kubernetes.io/arch: arm64
+    tolerations:
+      - effect: NoSchedule
+        key: system-type
+        operator: Equal
+        value: service
+  arguments: --config ./ramping-vus/1000-5m.json --tag testid=k6-test-XXXX-001
